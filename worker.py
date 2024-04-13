@@ -87,7 +87,9 @@ class WorkerJrc:
         """ Изменение статуса квартир """
         for flat in self.flats:
             flat_num = flat['flat_num']
-            same_old_flat = [flat for flat in self.old_flats if flat['flat_num'] == flat_num]
+            object_name = flat['object_name']
+            same_old_flat = [flat for flat in self.old_flats if flat['flat_num'] == flat_num
+                             and flat['object_name'] == object_name]
             if not same_old_flat:
                 continue
             same_old_flat = same_old_flat[0]
@@ -99,7 +101,9 @@ class WorkerJrc:
         """ Изменение цен """
         for flat in self.flats:
             flat_num = flat['flat_num']
-            same_old_flat = [flat for flat in self.old_flats if flat['flat_num'] == flat_num]
+            object_name = flat['object_name']
+            same_old_flat = [flat for flat in self.old_flats if flat['flat_num'] == flat_num
+                             and flat['object_name'] == object_name]
             if not same_old_flat:
                 continue
             same_old_flat = same_old_flat[0]
