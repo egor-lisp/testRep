@@ -1,3 +1,4 @@
+import os.path
 from utils import load_json, dump_json
 from tg_sender import send_file
 import xlwt
@@ -12,6 +13,8 @@ def make_report_jrc(site):
     elif site == 'stroyzakaz':
         history_path = 'stroyzakaz/history.json'
     else:
+        return
+    if not os.path.exists(history_path):
         return
     history = load_json(history_path)
     last_report_date = history.get('last_report_date')
