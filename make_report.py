@@ -129,6 +129,9 @@ def make_report_jrc(site):
             'plan_link': plan_link
         })
 
+    if not flats_new and not flats_disappear:
+        return
+    
     # Создаем excel файл
     book = xlwt.Workbook(encoding="utf-8")
     sheet1 = book.add_sheet("Sheet 1")
