@@ -11,8 +11,8 @@ class WorkerJrc:
     """ Изменения для сайта жрс.рф  """
 
     def __init__(self):
-        self.cache_filename = 'jrc/old_flats.json'
-        self.history_filename = 'jrc/history.json'
+        self.cache_filename = os.path.join(os.getcwd(), 'jrc/old_flats.json')
+        self.history_filename = os.path.join(os.getcwd(), 'jrc/history.json')
         self.old_flats = self.load_cache()
         self.flats = []
         # Изменения
