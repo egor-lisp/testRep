@@ -4,14 +4,16 @@ from tg_sender import send_file
 import xlwt
 from datetime import datetime
 
+WORK_DIR = '/home/rooms_parser'
+
 
 def make_report_jrc(site):
     if site == 'жрс.рф':
-        history_path = 'jrc/history.json'
+        history_path = os.path.join(WORK_DIR, 'jrc/history.json')
     elif site == 'realsv35':
-        history_path = 'realsv35/history.json'
+        history_path = os.path.join(WORK_DIR, 'realsv35/history.json')
     elif site == 'stroyzakaz':
-        history_path = 'stroyzakaz/history.json'
+        history_path = os.path.join(WORK_DIR, 'stroyzakaz/history.json')
     else:
         return
     if not os.path.exists(history_path):
@@ -131,7 +133,7 @@ def make_report_jrc(site):
 
     if not flats_new and not flats_disappear:
         return
-    
+
     # Создаем excel файл
     book = xlwt.Workbook(encoding="utf-8")
     sheet1 = book.add_sheet("Sheet 1")
