@@ -6,13 +6,15 @@ from utils import load_json, dump_json
 import os
 import time
 
+WORK_DIR = '/home/rooms_parser'
+
 
 class WorkerJrc:
     """ Изменения для сайта жрс.рф  """
 
     def __init__(self):
-        self.cache_filename = os.path.join(os.getcwd(), 'jrc/old_flats.json')
-        self.history_filename = os.path.join(os.getcwd(), 'jrc/history.json')
+        self.cache_filename = os.path.join(WORK_DIR, 'jrc/old_flats.json')
+        self.history_filename = os.path.join(WORK_DIR, 'jrc/history.json')
         self.old_flats = self.load_cache()
         self.flats = []
         # Изменения
