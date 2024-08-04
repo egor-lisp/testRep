@@ -1,0 +1,288 @@
+openapi: 3.0.0
+info:
+  title: P2P API
+  version: v1
+  description: API for interacting with P2P platforms (Binance, Bybit, HTX).
+servers:
+  - url: http://185.231.155.51:5000/api/v1
+paths:
+  /get_p2p_orders:
+    post:
+      summary: Retrieve P2P orders from specified platform
+      operationId: getP2POrders
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                platform:
+                  type: string
+                  default: "binance"
+                  description: |
+                    The platform to retrieve orders from. 
+                    Supported values are:
+                    - **binance**: For Binance P2P orders.
+                    - **bybit**: For Bybit P2P orders.
+                    - **htx**: For HTX P2P orders.
+                token:
+                  type: string
+                  default: "BTC"
+                  description: |
+                    The token to be used for the request. 
+                    Examples: USDT, BTC, ETH, ... You can get the available tokens using the get_currencies method.
+                fiat:
+                  type: string
+                  default: "USD"
+                  description: |
+                    The fiat currency to use for the P2P orders. 
+                    Examples include 'USD', 'EUR', etc. You can get the available fiats using the get_currencies method.
+                side:
+                  type: string
+                  default: "buy"
+                  description: |
+                    The side of the order to retrieve. 
+                    Can be either **buy** or **sell**. 
+                    Defaults to **buy** if not specified.
+                amount:
+                  type: string
+                  default: ""
+                  description: |
+                    The amount of fiat currency you wish to trade. 
+                    This can be a specific quantity or left empty to retrieve all available orders.
+                payments:
+                  type: string
+                  default: ""
+                  description: |
+                    A comma-separated list of payment methods you prefer. 
+                    For example: 'bank_transfer, PayPal'. You can use the get_payments method, which gives you the available payment methods for a given currency.
+                countries:
+                  type: string
+                  default: ""
+                  description: |
+                    A comma-separated list of countries from which you want to filter the P2P orders. 
+                    You can use the get_payments method, which gives you the available countries for a given currency. 
+                    Right now only Binance has this filter. Left blank if you want to get orders for any country.
+                    For example: 'US, CA'.
+                merchant_only:
+                  type: string
+                  default: "no"
+                  description: |
+                    Indicates if only merchant offers should be returned. 
+                    Use **yes** to filter for merchant-only offers, or **no** to include all offers.
+                api_key:
+                  type: string
+                  default: "YOUR_API_KEY"
+                  description: |
+                    The API key for authentication. 
+                    This key is required to access the API and should be kept confidential.
+      responses:
+        '200':
+          description: Successful response containing P2P orders.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      example: {
+                        "count": 0.08056068,
+                        "price": 61530.03,
+                        "side": "sell",
+                        "token": "BTC",
+                        "fiat": "USD",
+                        "max_amount": 500,
+                        "min_amount": 10,
+                        "payments": [
+                          {
+                            "id": "Zinli",
+                            "name": "Zinli"
+                          },
+                          {
+                            "id": "Towerbank",
+                            "name": "Towerbank"
+                          },
+                          {
+                            "id": "MercantilBankPanama",
+                            "name": "MercantilBankPanama"
+                          },
+                          {
+                            "id": "WallyTech",
+                            "name": "WallyTech"
+                          }
+                        ]
+                      }
+        '500':
+          description: Error occured when getting orders
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error_info:
+                    type: string
+                    example: "short error description"
+                    
+        '400':
+          description: Bad request, invalid parameters.
+        '401':
+          description: Unauthorized, invalid API key.
+  
+  /get_currencies:
+    get:
+      summary: Retrieve supported currencies from specified platform
+      operationId: getP2PCurrencies
+      parameters:
+        - name: platform
+          in: query
+          required: true
+          schema:
+            type: string
+            description: The platform to retrieve currencies from (e.g., 'binance', 'bybit', 'htx').
+        - name: api_key
+          in: query
+          required: true
+          schema:
+            type: string
+            description: The API key for authentication.
+      responses:
+        '200':
+          description: Successful response containing supported currencies.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    example: {
+                      "crypto": [
+                        {
+                          "code": "USDT",
+                          "desc": "Tether"
+                        },
+                        {
+                          "code": "BTC",
+                          "desc": "Bitcoin"
+                        },
+                        {
+                          "code": "ETH",
+                          "desc": "Ethereum"
+                        }
+                      ],
+                      "currency": [
+                        {
+                          "code": "AED",
+                          "symbol": "د.إ"
+                        },
+                        {
+                          "code": "AMD",
+                          "symbol": "֏"
+                        },
+                        {
+                          "code": "ARS",
+                          "symbol": "$"
+                        }
+                      ]
+                    }
+                  
+        '500':
+          description: Error occured when getting orders
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error_info:
+                    type: string
+                    example: "short error description"
+                  
+        '400':
+          description: Bad request, invalid parameters.
+        '401':
+          description: Unauthorized, invalid API key.
+
+  /get_payments:
+    get:
+      summary: Retrieve payment methods for a specified fiat currency
+      operationId: getPayments
+      parameters:
+        - name: platform
+          in: query
+          required: true
+          schema:
+            type: string
+            description: The platform to retrieve payment methods from (e.g., 'binance', 'bybit', 'htx').
+        - name: fiat
+          in: query
+          required: true
+          schema:
+            type: string
+            description: The fiat currency to get payment methods for.
+        - name: api_key
+          in: query
+          required: true
+          schema:
+            type: string
+            description: The API key for authentication.
+      responses:
+        '200':
+          description: Successful response containing payment methods.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  countries:
+                    type: array
+                    items:
+                      type: object
+                      example: {
+                        "code": "EC",
+                        "name": "Ecuador"
+                      }
+                  payMethods:
+                    type: array
+                    items:
+                      type: object
+                      example: {
+                        "id": 11,
+                        "name": "Bank of Georgia"
+                      }
+        
+        '500':
+          description: Error occured when getting orders
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  error_info:
+                    type: string
+                    example: "short error description"
+        '400':
+          description: Bad request, invalid parameters.
+        '401':
+          description: Unauthorized, invalid API key.
